@@ -1,0 +1,173 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    transition: 0.3s;
+}
+
+body {
+    background: #f3f3f3;
+}
+
+/* NAVBAR */
+.navbar {
+    position: sticky;
+    top: 0;
+    background: #0d5c8f;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 40px;
+    align-items: center;
+    z-index: 1000;
+}
+.navbar a{
+    text-decoration: none;
+    color: white;
+}
+
+.nav-left {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+}
+
+.nav-links a:hover {
+    color: #ffc107;
+}
+
+.nav-right {
+    display: flex;
+    gap: 60px;
+    align-items: center;
+}
+
+button {
+    cursor: pointer;
+}
+
+.btn-yellow {
+    background: #ffc107;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid #28a745;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+.btn-green {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.btn-green:hover {
+    transform: scale(1.05);
+}
+
+/* HERO */
+.hero {
+    background: linear-gradient(to right, #87a7b8, #9db7c5);
+    padding: 50px;
+    position: relative;
+}
+
+.callout {
+    background: #0d5c8f;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 65%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.social {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    font-size: 22px;
+}
+
+.social i:hover {
+    transform: scale(1.2);
+}
+
+.car {
+    position: absolute;
+    right: 50px;
+    bottom: 0;
+    width: 250px;
+}
+
+/* DARK MODE */
+body.dark {
+    background: #1e1e1e;
+    color: white;
+}
+
+body.dark .card {
+    background: #2a2a2a;
+}
+
+body.dark .navbar {
+    background: #111;
+}
+
+/* MOBILE */
+.menu-toggle {
+    display: none;
+}
+
+@media(max-width: 900px) {
+    .card {
+        width: 100%;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        background: #0d5c8f;
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        padding: 15px;
+    }
+
+    .menu-toggle {
+        display: block;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 20px;
+    }
+}

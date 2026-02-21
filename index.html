@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeRacer Clone</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-left">
+        <div class="logo">typeracer</div>
+        <a href="#">Pit Stop</a>
+        <a href="#">Updates</a>
+        <a href="#">Discord</a>
+        <a href="#">About</a>
+        <a href="#">Merch</a>
+    </div>
+
+    <div class="nav-right">
+        <div class="btn-yellow">★ Subscribe</div>
+        <div class="btn-outline">Create Account</div>
+        <div class="btn-outline">Sign In</div>
+    </div>
+</nav>
+
+<!-- HERO SECTION -->
+<section class="hero">
+
+    <div class="callout">
+        <div>
+            <h3>Record your races with a TypeRacer Account!</h3>
+            <p>
+                Save your race history and scores.
+                Customize your profile and car. It's free, why not?
+            </p>
+        </div>
+        <button>Create Your Account</button>
+    </div>
+
+    <div class="card">
+        <h2>TypeRacer - The Global Typing Competition</h2>
+        <p>Increase your typing speed while racing against others!</p>
+
+        <button class="btn-green">Enter a Typing Race</button>
+
+        <div class="bottom-links">
+            <span>Language: English</span>
+            <span>Instant Death Mode: off</span>
+            <span>Theme: Responsive</span>
+        </div>
+
+        <div class="social">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+</section>
+
+<!-- TYPING AREA -->
+<div class="typing-area">
+    <select id="themeSelect">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+    </select>
+
+    <button id="startBtn" class="btn-green" style="margin-bottom: 15px;">Start Typing</button>
+
+    <p id="countdown" style="font-size:24px; margin:10px 0;"></p>
+
+    <p id="textDisplay"></p>
+    <textarea id="inputBox" placeholder="Start typing here..." rows="4" disabled></textarea>
+
+    <div class="result">
+        <span>Time: <strong id="time">0</strong>s</span>
+        <span>WPM: <strong id="finalWpm">0</strong></span>
+        <span>Accuracy: <strong id="accuracy">100</strong>%</span>
+        <span>AI WPM: <strong id="aiWpm">0</strong></span>
+        <span id="winner" style="font-weight:bold; margin-left:10px;"></span>
+    </div>
+
+    <button id="restartBtn" class="btn-green" style="margin-top:15px;">Play Again</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
