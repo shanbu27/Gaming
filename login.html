@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a href="index.html" class="back-btn">← Back</a>
+
+<div class="auth-wrapper">
+    <div class="auth-container">
+
+        <h2>Login</h2>
+
+        <input id="logUser" placeholder="Username">
+        <input id="logPass" type="password" placeholder="Password">
+
+        <button onclick="login()">Login</button>
+
+        <p><a href="reset-password.html">Forgot Password?</a></p> <br>
+
+        <p>Don't have an account? <a href="register.html">Register</a></p>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+
+<script>
+function login() {
+    let user = document.getElementById("logUser").value;
+    let pass = document.getElementById("logPass").value;
+
+    let savedPass = localStorage.getItem("user_" + user);
+
+    if (savedPass === pass) {
+        localStorage.setItem("loggedUser", user);
+        window.location.href = "index.html";
+    } else {
+        alert("Wrong username or password");
+    }
+}
+</script>
+
+</body>
+</html>

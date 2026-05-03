@@ -1,173 +1,347 @@
+
+/* ===================== */
+/* RESET                 */
+/* ===================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
-    transition: 0.3s;
 }
 
+/* ===================== */
+/* BASE BODY             */
+/* ===================== */
 body {
-    background: #f3f3f3;
-}
-
-/* NAVBAR */
-.navbar {
-    position: sticky;
-    top: 0;
-    background: #0d5c8f;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 40px;
-    align-items: center;
-    z-index: 1000;
-}
-.navbar a{
-    text-decoration: none;
+    font-family: Arial;
+    background: #111;
     color: white;
 }
 
-.nav-left {
+/* ===================== */
+/* GAME CENTER           */
+/* ===================== */
+.game-body {
     display: flex;
-    gap: 50px;
+    justify-content: center;
     align-items: center;
+    height: 100vh;
 }
 
-.nav-links {
+/* ===================== */
+/* TOP ACTION BUTTONS    */
+/* ===================== */
+.top-actions {
+    position: fixed;
+    top: 10px;
+    left: 10px;
     display: flex;
-    gap: 20px;
+    gap: 10px;
+    z-index: 999;
 }
 
-.nav-links a {
-    color: white;
-    text-decoration: none;
-}
-
-.nav-links a:hover {
-    color: #ffc107;
-}
-
-.nav-right {
-    display: flex;
-    gap: 60px;
-    align-items: center;
-}
-
-button {
+.top-actions button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: #00ff99;
+    color: black;
+    font-weight: bold;
     cursor: pointer;
 }
 
-.btn-yellow {
-    background: #ffc107;
-    border: none;
+.top-actions button:hover {
+    background: #00cc77;
+}
+
+/* ===================== */
+/* THEME BUTTON (TOP RIGHT) */
+/* ===================== */
+.top-controls {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 9999;
+}
+
+#themeToggle {
+    width: auto;
     padding: 8px 14px;
-    border-radius: 6px;
-    font-weight: bold;
-}
-
-.btn-outline {
-    background: transparent;
-    border: 2px solid #28a745;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-}
-
-.btn-green {
-    background: #28a745;
-    color: white;
+    border-radius: 10px;
     border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    font-size: 16px;
+    background: #00ff99;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-.btn-green:hover {
+#themeToggle:hover {
+    background: #00cc77;
     transform: scale(1.05);
 }
 
-/* HERO */
-.hero {
-    background: linear-gradient(to right, #87a7b8, #9db7c5);
-    padding: 50px;
-    position: relative;
+/* ===================== */
+/* MAIN CONTAINER        */
+/* ===================== */
+.container {
+    width: 800px;
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,255,150,0.3);
 }
 
-.callout {
-    background: #0d5c8f;
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
+/* ===================== */
+/* TOP BAR               */
+/* ===================== */
+.top-bar {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 30px;
+    align-items: center;
 }
 
-.card {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    width: 65%;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+h1 {
+    color: #00ff99;
 }
 
-.social {
-    margin-top: 20px;
-    display: flex;
-    gap: 15px;
-    font-size: 22px;
+/* ===================== */
+/* TEXT DISPLAY          */
+/* ===================== */
+#textDisplay {
+    background: #2a2a2a;
+    padding: 15px;
+    border-radius: 8px;
+    min-height: 80px;
+    margin-bottom: 10px;
 }
 
-.social i:hover {
-    transform: scale(1.2);
-}
-
-.car {
-    position: absolute;
-    right: 50px;
-    bottom: 0;
-    width: 250px;
-}
-
-/* DARK MODE */
-body.dark {
-    background: #1e1e1e;
+/* ===================== */
+/* INPUT BOX             */
+/* ===================== */
+textarea {
+    width: 100%;
+    height: 100px;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 16px;
+    outline: none;
+    background: #222;
     color: white;
 }
 
-body.dark .card {
-    background: #2a2a2a;
+/* ===================== */
+/* BUTTONS               */
+/* ===================== */
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: #00ff99;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+   
 }
 
-body.dark .navbar {
+button:hover {
+    background: #00cc77;
+}
+
+#restartBtn {
+    background: #ff4444;
+    color: white;
+}
+
+#restartBtn:hover {
+    background: #cc3333;
+}
+
+/* ===================== */
+/* STATS                 */
+/* ===================== */
+.stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* ===================== */
+/* SELECT                */
+/* ===================== */
+select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+/* ===================== */
+/* COUNTDOWN             */
+/* ===================== */
+#countdown {
+    text-align: center;
+    font-size: 22px;
+    color: #00ff99;
+}
+
+/* ===================== */
+/* PROGRESS BAR          */
+/* ===================== */
+#progressBar {
+    height: 8px;
+    width: 100%;
+    background: #333;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+#progressBar div {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff99, #00ccff);
+    transition: width 0.2s ease;
+}
+
+/* ===================== */
+/* AUTH PAGES            */
+/* ===================== */
+.auth-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background: #111;
 }
 
-/* MOBILE */
-.menu-toggle {
-    display: none;
+.auth-container {
+    width: 350px;
+    padding: 25px;
+    background: #1e1e1e;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,255,150,0.2);
+    text-align: center;
 }
 
-@media(max-width: 900px) {
-    .card {
-        width: 100%;
-    }
+.auth-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #333;
+    border-radius: 8px;
+    background: #2a2a2a;
+    color: white;
+    outline: none;
+}
 
-    .nav-links {
-        display: none;
-        flex-direction: column;
-        background: #0d5c8f;
-        position: absolute;
-        top: 60px;
-        right: 20px;
-        padding: 15px;
-    }
+.auth-container input:focus {
+    border-color: #00ff99;
+    box-shadow: 0 0 8px #00ff99;
+}
+.auth-container a{
+    font-size: 19px;
+    color:red;
+}
+.auth-container p{
+    margin-top: 10px;
+}
 
-    .menu-toggle {
-        display: block;
-        background: transparent;
-        border: none;
-        color: white;
-        font-size: 20px;
-    }
+/* ===================== */
+/* BACK BUTTON           */
+/* ===================== */
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 16px;
+    background: #00ff99;
+    color: black;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    z-index: 1000;
+    transition: 0.2s;
+}
+
+.back-btn:hover {
+    background: #00cc77;
+    transform: scale(1.05);
+}
+
+/* ===================== */
+/* DASHBOARD             */
+/* ===================== */
+.dash-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    background: #1e1e1e;
+    padding: 25px;
+    border-radius: 16px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,255,150,0.15);
+    animation: floatCard 4s ease-in-out infinite;
+}
+
+.card:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 0 35px rgba(0,255,150,0.35);
+}
+
+@keyframes floatCard {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
+}
+
+/* ===================== */
+/* LIGHT MODE            */
+/* ===================== */
+body.light {
+    background: #f5f5f5;
+    color: #111;
+}
+
+body.light .container,
+body.light .auth-container,
+body.light .card {
+    background: white;
+    color: #111;
+}
+
+/* ===================== */
+/* FIXED INPUT (SAFE MODE) */
+/* ===================== */
+body.light textarea#inputBox {
+    background: #ffffff !important;
+    color: #111 !important;
+
+    border: 2px solid #00ff99;
+
+    padding: 10px;
+    font-size: 16px;
+
+    border-radius: 8px;
+
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+
+    width: 100%;
+}
+
+/* placeholder fix */
+body.light textarea#inputBox::placeholder {
+    color: #666;
+}
+body.light #textDisplay {
+    background: #ffffff;
+    color: #111111;
+    border: 1px solid #ddd;
 }
