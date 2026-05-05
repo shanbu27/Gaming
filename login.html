@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Typing Game</title>
     <link rel="stylesheet" href="style.css">
+    <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.add("light-mode");}</script>
 </head>
 <body>
 
@@ -11,38 +14,28 @@
 <div class="auth-wrapper">
     <div class="auth-container">
 
-        <h2>Login</h2>
+        <h2>⚡ Welcome Back</h2>
+        <p class="auth-subtitle">Log in to track your progress</p>
 
-        <input id="logUser" placeholder="Username">
-        <input id="logPass" type="password" placeholder="Password">
+        <input id="logUser" placeholder="Username" autocomplete="username">
+        <input id="logPass" type="password" placeholder="Password" autocomplete="current-password">
 
-        <button onclick="login()">Login</button>
+        <button onclick="login()">Login →</button>
 
-        <p><a href="reset-password.html">Forgot Password?</a></p> <br>
+        <p id="loginMsg" style="color:var(--danger);font-size:13px;min-height:18px;font-family:'Space Mono',monospace;"></p>
 
-        <p>Don't have an account? <a href="register.html">Register</a></p>
+        <p><a href="reset-password.html">Forgot password?</a></p>
+        <p>No account? <a href="register.html">Register</a></p>
 
     </div>
 </div>
 
 <script src="script.js"></script>
-</body>
-
 <script>
-function login() {
-    let user = document.getElementById("logUser").value;
-    let pass = document.getElementById("logPass").value;
-
-    let savedPass = localStorage.getItem("user_" + user);
-
-    if (savedPass === pass) {
-        localStorage.setItem("loggedUser", user);
-        window.location.href = "index.html";
-    } else {
-        alert("Wrong username or password");
-    }
-}
+    // Allow Enter key to submit
+    document.addEventListener("keydown", e => {
+        if (e.key === "Enter") login();
+    });
 </script>
-
 </body>
 </html>

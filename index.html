@@ -2,67 +2,298 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Typing Speed Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Typing Game</title>
     <link rel="stylesheet" href="style.css">
+    <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.add("light-mode");}</script>
+    <style>
+        .landing-body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .landing-logo {
+            font-size: 52px;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: -2px;
+            margin-bottom: 8px;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .landing-tagline {
+            font-size: 15px;
+            color: var(--muted);
+            margin-bottom: 44px;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .landing-features {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 44px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .feature-pill {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 9px 18px;
+            font-size: 13px;
+            color: var(--muted);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .feature-pill span { color: var(--accent); margin-right: 5px; }
+
+        /* Guest buttons */
+        .guest-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-big {
+            padding: 14px 38px;
+            font-size: 15px;
+            border-radius: 12px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: auto;
+            margin: 0;
+            border: none;
+        }
+
+        .btn-big.solid {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .btn-big.solid:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+        .btn-big.outline {
+            background: transparent;
+            color: var(--text);
+            border: 1.5px solid var(--border);
+        }
+
+        .btn-big.outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .guest-note {
+            font-size: 12px;
+            color: var(--muted);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .guest-note a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .guest-note a:hover { text-decoration: underline; }
+
+        .btn-big.ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1.5px dashed var(--border);
+            font-size: 14px;
+            padding: 11px 32px;
+        }
+        .btn-big.ghost:hover {
+            border-color: var(--muted);
+            color: var(--text);
+            transform: translateY(-1px);
+        }
+
+        .divider-text {
+            font-size: 12px;
+            color: var(--muted);
+            font-family: 'Space Mono', monospace;
+            margin: 10px 0 6px;
+        }
+
+        /* Logged-in panel */
+        .welcome-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px 48px;
+            min-width: 340px;
+            box-shadow: 0 0 40px rgba(0,245,160,0.08);
+        }
+
+        .welcome-panel h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .welcome-username {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            color: var(--accent);
+            margin-bottom: 24px;
+        }
+
+        .best-stat {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            margin-bottom: 22px;
+        }
+
+        .best-stat .label {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .best-stat .value {
+            font-size: 38px;
+            font-weight: 700;
+            font-family: 'Space Mono', monospace;
+            color: var(--warn);
+            margin-top: 4px;
+        }
+
+        .logged-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-play {
+            padding: 13px;
+            font-size: 15px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin: 0;
+        }
+
+        .btn-play:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+        .btn-dash {
+            padding: 11px;
+            font-size: 14px;
+            background: transparent;
+            color: var(--text);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin: 0;
+        }
+
+        .btn-dash:hover { border-color: var(--accent); color: var(--accent); }
+
+        .btn-logout-sm {
+            padding: 8px;
+            font-size: 13px;
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin: 0;
+        }
+
+        .btn-logout-sm:hover { color: var(--danger); border-color: var(--danger); }
+    </style>
 </head>
 
-<body class="game-body">
+<body class="landing-body">
 
-<!-- TOP ACTIONS -->
-<div class="top-actions">
-    <button onclick="goRegister()">Create Account</button>
-    <button onclick="logout()">Logout</button>
-</div>
-
-<!-- THEME BUTTON -->
+<!-- Theme Toggle -->
 <div class="top-controls">
-    <button onclick="toggleTheme()" id="themeToggle">
-        ☀️ Light Mode
-    </button>
+    <button onclick="toggleTheme()" id="themeToggle">☀️ Light Mode</button>
 </div>
 
-<!-- GAME CONTAINER -->
-<div class="container">
+<!-- LOGO -->
+<div class="landing-logo">⚡ Typing Game</div>
+<p class="landing-tagline">Test your speed. Beat your record. Type faster every day.</p>
 
-    <div class="top-bar">
-        <h1>⚡ Typing Game</h1>
+<!-- FEATURE PILLS -->
+<div class="landing-features">
+    <div class="feature-pill"><span>⚡</span>Real-time WPM</div>
+    <div class="feature-pill"><span>🎯</span>Accuracy Tracking</div>
+    <div class="feature-pill"><span>🔥</span>Streak & Combo</div>
+    <div class="feature-pill"><span>🏆</span>Personal Best</div>
+    <div class="feature-pill"><span>🎨</span>Dark / Light Mode</div>
+</div>
+
+<!-- GUEST VIEW -->
+<div id="guestView">
+    <div class="guest-actions">
+        <button class="btn-big solid" onclick="window.location.href='register.html'">Create Account</button>
+        <button class="btn-big outline" onclick="window.location.href='login.html'">Login</button>
     </div>
+    <p class="divider-text">— or —</p>
+    <button class="btn-big ghost" onclick="window.location.href='game.html'">🎮 Play as Guest</button>
+    <p class="guest-note" style="margin-top:12px;">Guest scores won't be saved. <a href="register.html">Create a free account</a> to track progress.</p>
+</div>
 
-    <p id="userLabel">Player</p>
-
-    <div id="progressBar"></div>
-
-    <div id="textDisplay">Click Start to begin</div>
-
-    <textarea id="inputBox" placeholder="Type here..."></textarea>
-
-    <button id="startBtn">Start Game</button>
-    <button id="restartBtn">Restart</button>
-
-    <select id="difficulty">
-        <option value="easy">Easy</option>
-        <option value="medium" selected>Medium</option>
-        <option value="hard">Hard</option>
-    </select>
-
-    <h3 id="countdown"></h3>
-
-    <div class="stats">
-        <p>⏱ Time: <span id="time">0</span>s</p>
-        <p>⚡ WPM: <span id="wpm">0</span></p>
-        <p>🎯 Accuracy: <span id="accuracy">0</span>%</p>
-        <p>🔥 Streak: <span id="streak">0</span></p>
-        <p>🔥 Combo: <span id="combo">0</span></p>
+<!-- LOGGED-IN VIEW -->
+<div id="loggedView" style="display:none;">
+    <div class="welcome-panel">
+        <h2>Welcome back!</h2>
+        <p class="welcome-username" id="welcomeUser"></p>
+        <div class="best-stat">
+            <div class="label">🏆 Your Best WPM</div>
+            <div class="value" id="welcomeBestWpm">—</div>
+        </div>
+        <div class="logged-actions">
+            <button class="btn-play"  onclick="window.location.href='game.html'">▶ Play Game</button>
+            <button class="btn-dash"  onclick="window.location.href='dashboard.html'">📊 Dashboard</button>
+            <button class="btn-logout-sm" onclick="doLogout()">🚪 Logout</button>
+        </div>
     </div>
-
-    <p>🏆 Best WPM: <span id="bestWpm">0</span></p>
-
-    <audio id="typeSound"
-        src="https://www.soundjay.com/button/sounds/button-16.mp3">
-    </audio>
-
 </div>
 
 <script src="script.js"></script>
+<script>
+    // Decide which view to show
+    const loggedUser = localStorage.getItem("loggedUser");
+
+    if (loggedUser) {
+        document.getElementById("guestView").style.display  = "none";
+        document.getElementById("loggedView").style.display = "block";
+        document.getElementById("welcomeUser").textContent  = "👤 " + loggedUser;
+        const best = localStorage.getItem("bestWpm_" + loggedUser) || "—";
+        document.getElementById("welcomeBestWpm").textContent = best;
+    }
+
+    function doLogout() {
+        localStorage.removeItem("loggedUser");
+        window.location.reload();
+    }
+</script>
 </body>
 </html>

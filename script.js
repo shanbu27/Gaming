@@ -1,4 +1,3 @@
-
 // =====================
 // USER SYSTEM
 // =====================
@@ -10,398 +9,407 @@ const user = getUser();
 let bestKey = "bestWpm_" + user;
 
 // =====================
-// ELEMENTS
+// ELEMENTS (safe refs)
 // =====================
-const textDisplay = document.getElementById("textDisplay");
-const inputBox = document.getElementById("inputBox");
-const startBtn = document.getElementById("startBtn");
-const restartBtn = document.getElementById("restartBtn");
-
-const timeEl = document.getElementById("time");
-const wpmEl = document.getElementById("wpm");
-const accuracyEl = document.getElementById("accuracy");
-const countdownEl = document.getElementById("countdown");
-
-const difficulty = document.getElementById("difficulty");
-const bestWpmEl = document.getElementById("bestWpm");
-const comboEl = document.getElementById("combo");
-const progressBar = document.getElementById("progressBar");
-const typeSound = document.getElementById("typeSound");
+const textDisplay   = document.getElementById("textDisplay");
+const inputBox      = document.getElementById("inputBox");
+const startBtn      = document.getElementById("startBtn");
+const restartBtn    = document.getElementById("restartBtn");
+const timeEl        = document.getElementById("time");
+const wpmEl         = document.getElementById("wpm");
+const accuracyEl    = document.getElementById("accuracy");
+const countdownEl   = document.getElementById("countdown");
+const difficultyEl  = document.getElementById("difficulty");
+const bestWpmEl     = document.getElementById("bestWpm");
+const comboEl       = document.getElementById("combo");
+const streakEl      = document.getElementById("streak");
+const progressBar   = document.getElementById("progressBar");
+const progressFill  = document.getElementById("progressFill");
+const typeSound     = document.getElementById("typeSound");
 
 // =====================
 // USER LABEL
 // =====================
-if (document.getElementById("userLabel")) {
-    document.getElementById("userLabel").textContent = "Player: " + user;
+const userLabel = document.getElementById("userLabel");
+if (userLabel) userLabel.textContent = "Player: " + user;
+
+// =====================
+// THEME SYSTEM (applied immediately to avoid flash)
+// =====================
+(function() {
+    if (localStorage.getItem("theme") === "light") {
+        document.documentElement.classList.add("light-mode");
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.classList.add("light");
+            const btn = document.getElementById("themeToggle");
+            if (btn) btn.textContent = "🌙 Dark Mode";
+        });
+    }
+})();
+
+function toggleTheme() {
+    const isLight = document.body.classList.toggle("light");
+    localStorage.setItem("theme", isLight ? "light" : "dark");
+    const btn = document.getElementById("themeToggle");
+    if (btn) btn.textContent = isLight ? "🌙 Dark Mode" : "☀️ Light Mode";
 }
 
 // =====================
 // GAME STATE
 // =====================
 const MAX_TIME = 60;
-
-let timer;
-let time = 0;
-let isPlaying = false;
-let originalText = "";
-let combo = 0;
-
-// 🔥 STREAK SYSTEM
-let streak = 0;
-let maxStreak = 0;
-
-// =====================
-// LOAD BEST SCORE
-// =====================
-let bestWpm = localStorage.getItem(bestKey) || 0;
+let timer, time = 0, isPlaying = false, originalText = "";
+let combo = 0, streak = 0, maxStreak = 0, mistakes = 0;
+let bestWpm = parseInt(localStorage.getItem(bestKey)) || 0;
 if (bestWpmEl) bestWpmEl.textContent = bestWpm;
 
 // =====================
-// THEME SYSTEM
+// TEXT LIBRARY
 // =====================
+const texts = {
+    easy: [
+        "I like coding every day.",
+        "Dogs are very friendly pets.",
+        "JavaScript is a fun language.",
+        "The sun rises in the east.",
+        "She drinks coffee every morning.",
+        "Books open the mind to new worlds.",
+        "Music makes every moment better.",
+        "We learn by making mistakes.",
+        "A smile can change someone's day.",
+        "Practice makes perfect over time."
+    ],
+    medium: [
+        "Programming improves your problem solving skills.",
+        "Typing fast requires daily practice and deep focus.",
+        "Developers build software to solve real world problems.",
+        "Consistency is the key to mastering any new skill.",
+        "Good code is easy to read and simple to maintain.",
+        "Version control helps teams collaborate on large projects.",
+        "Debugging is the art of removing errors from your code.",
+        "Functions let you reuse blocks of code efficiently.",
+        "The best programmers are always learning something new.",
+        "Breaking problems into smaller steps makes them easier."
+    ],
+    hard: [
+        "Asynchronous programming improves performance in non-blocking I/O operations.",
+        "Data structures and algorithms determine software efficiency and scalability.",
+        "Modern applications rely on optimized backend architecture and caching layers.",
+        "Recursion is a technique where a function calls itself to solve subproblems.",
+        "Polymorphism allows objects of different types to be treated uniformly.",
+        "Dependency injection reduces coupling and improves testability in large systems.",
+        "Garbage collection automatically manages memory allocation in modern runtimes.",
+        "Concurrency allows multiple computations to make progress simultaneously.",
+        "Immutability in functional programming eliminates side effects and bugs.",
+        "Binary search reduces lookup complexity from linear to logarithmic time."
+    ]
+};
 
-// load saved theme
-if (localStorage.getItem("theme") === "light") {
-    document.body.classList.add("light");
-}
-
-function toggleTheme() {
-    document.body.classList.toggle("light");
-
-    if (document.body.classList.contains("light")) {
-        localStorage.setItem("theme", "light");
-        document.getElementById("themeToggle").textContent = "🌙 Dark Mode";
-    } else {
-        localStorage.setItem("theme", "dark");
-        document.getElementById("themeToggle").textContent = "☀️ Light Mode";
-    }
+function getTextByDifficulty() {
+    const level = difficultyEl ? difficultyEl.value : "medium";
+    const pool = texts[level] || texts.medium;
+    return pool[Math.floor(Math.random() * pool.length)];
 }
 
 // =====================
 // REGISTER
 // =====================
 function register() {
-    let user = document.getElementById("regUser").value.trim().toLowerCase();
-    let email = document.getElementById("regEmail").value.trim();
-    let pass = document.getElementById("regPass").value.trim();
-    let confirm = document.getElementById("regConfirm").value.trim();
+    const regUser    = document.getElementById("regUser");
+    const regEmail   = document.getElementById("regEmail");
+    const regPass    = document.getElementById("regPass");
+    const regConfirm = document.getElementById("regConfirm");
+    const error      = document.getElementById("errorMsg");
 
-    let error = document.getElementById("errorMsg");
+    if (!regUser) return;
 
-    error.style.color = "red";
+    const u = regUser.value.trim().toLowerCase();
+    const e = regEmail.value.trim();
+    const p = regPass.value.trim();
+    const c = regConfirm.value.trim();
 
-    if (user === "" || pass === "" || confirm === "") {
-        error.textContent = "⚠️ All fields required";
-        return;
-    }
+    error.style.color = "var(--danger)";
 
-    if (user.length < 3) {
-        error.textContent = "⚠️ Username must be at least 3 letters";
-        return;
-    }
+    if (!u || !p || !c) { error.textContent = "⚠️ All fields required"; return; }
+    if (u.length < 3)   { error.textContent = "⚠️ Username must be at least 3 characters"; return; }
+    if (!/^[a-zA-Z0-9_]+$/.test(u)) { error.textContent = "⚠️ Letters, numbers, underscores only"; return; }
+    if (p.length < 5)   { error.textContent = "⚠️ Password must be at least 5 characters"; return; }
+    if (!/\d/.test(p))  { error.textContent = "⚠️ Password must include a number"; return; }
+    if (p !== c)        { error.textContent = "❌ Passwords do not match"; return; }
+    if (localStorage.getItem("user_" + u)) { error.textContent = "⚠️ Username already taken"; return; }
 
-    if (!/^[a-zA-Z]+$/.test(user)) {
-        error.textContent = "⚠️ Letters only (no numbers/symbols)";
-        return;
-    }
+    localStorage.setItem("user_" + u, p);
+    if (e) localStorage.setItem("email_" + u, e);
 
-    if (pass.length < 5) {
-        error.textContent = "⚠️ Password must be at least 5 characters";
-        return;
-    }
-
-    if (pass !== confirm) {
-        error.textContent = "❌ Passwords do not match";
-        return;
-    }
-
-    if (!/\d/.test(pass)) {
-        error.textContent = "⚠️ Password must include a number";
-        return;
-    }
-
-    if (localStorage.getItem("user_" + user)) {
-        error.textContent = "⚠️ Username already exists";
-        return;
-    }
-
-    localStorage.setItem("user_" + user, pass);
-
-    if (email) {
-        localStorage.setItem("email_" + user, email);
-    }
-
-    error.style.color = "green";
+    error.style.color = "var(--accent)";
     error.textContent = "✅ Account created! Redirecting...";
 
-    alert("🎉 Registered successfully! Please login.");
-
-    setTimeout(() => {
-        window.location.href = "login.html";
-    }, 1200);
+    setTimeout(() => { window.location.href = "login.html"; }, 1200);
 }
 
 // =====================
 // LOGIN
 // =====================
 function login() {
-    let user = document.getElementById("logUser").value.trim().toLowerCase();
-    let pass = document.getElementById("logPass").value.trim();
+    const logUser = document.getElementById("logUser");
+    const logPass = document.getElementById("logPass");
+    if (!logUser) return;
 
-    let saved = localStorage.getItem("user_" + user);
+    const u = logUser.value.trim().toLowerCase();
+    const p = logPass.value.trim();
+    const saved = localStorage.getItem("user_" + u);
 
-    if (!saved) {
-        alert("User not found");
-        return;
+    if (!saved)        { showAuthError("login", "❌ Username not found"); return; }
+    if (saved !== p)   { showAuthError("login", "❌ Wrong password"); return; }
+
+    localStorage.setItem("loggedUser", u);
+    window.location.href = "game.html";
+}
+
+function showAuthError(page, msg) {
+    let el = document.getElementById("loginMsg");
+    if (!el) {
+        el = document.createElement("p");
+        el.id = "loginMsg";
+        document.querySelector(".auth-container").appendChild(el);
     }
-
-    if (saved !== pass) {
-        alert("Wrong password");
-        return;
-    }
-
-    localStorage.setItem("loggedUser", user);
-
-    window.location.href = "dashboard.html";
+    el.style.color = "var(--danger)";
+    el.style.fontSize = "13px";
+    el.style.fontFamily = "'Space Mono', monospace";
+    el.textContent = msg;
 }
 
 // =====================
 // RESET PASSWORD
 // =====================
 function resetPassword() {
-    let user = document.getElementById("resetUser").value.trim().toLowerCase();
-    let newPass = document.getElementById("resetPass").value.trim();
-    let confirm = document.getElementById("resetConfirm").value.trim();
+    const resetUser    = document.getElementById("resetUser");
+    const resetPass    = document.getElementById("resetPass");
+    const resetConfirm = document.getElementById("resetConfirm");
+    const msg          = document.getElementById("resetMsg");
+    if (!resetUser) return;
 
-    let msg = document.getElementById("resetMsg");
-    msg.style.color = "red";
+    const u = resetUser.value.trim().toLowerCase();
+    const p = resetPass.value.trim();
+    const c = resetConfirm.value.trim();
 
-    if (user === "" || newPass === "" || confirm === "") {
-        msg.textContent = "⚠️ All fields required";
-        return;
-    }
+    msg.style.color = "var(--danger)";
 
-    if (!localStorage.getItem("user_" + user)) {
-        msg.textContent = "⚠️ Username not found";
-        return;
-    }
+    if (!u || !p || !c) { msg.textContent = "⚠️ All fields required"; return; }
+    if (!localStorage.getItem("user_" + u)) { msg.textContent = "⚠️ Username not found"; return; }
+    if (p.length < 5)   { msg.textContent = "⚠️ Password must be at least 5 characters"; return; }
+    if (!/\d/.test(p))  { msg.textContent = "⚠️ Password must include a number"; return; }
+    if (p !== c)        { msg.textContent = "❌ Passwords do not match"; return; }
 
-    if (newPass.length < 5) {
-        msg.textContent = "⚠️ Password must be at least 5 characters";
-        return;
-    }
+    localStorage.setItem("user_" + u, p);
+    msg.style.color = "var(--accent)";
+    msg.textContent = "✅ Password reset! Redirecting...";
 
-    if (!/\d/.test(newPass)) {
-        msg.textContent = "⚠️ Password must include a number";
-        return;
-    }
-
-    if (newPass !== confirm) {
-        msg.textContent = "❌ Passwords do not match";
-        return;
-    }
-
-    localStorage.setItem("user_" + user, newPass);
-
-    alert("🔐 Password reset successfully! Please login with your new password.");
-
-    msg.style.color = "green";
-    msg.textContent = "✅ Password reset! Redirecting to login...";
-
-    setTimeout(() => {
-        window.location.href = "login.html";
-    }, 1500);
+    setTimeout(() => { window.location.href = "login.html"; }, 1500);
 }
 
 // =====================
 // DASHBOARD
 // =====================
-if (window.location.pathname.includes("dashboard.html")) {
-    const user = getUser();
+function loadDashboard() {
+    if (!window.location.pathname.includes("dashboard.html")) return;
 
-    document.getElementById("user").textContent = "👤 " + user;
+    const u = getUser();
+    const userEl = document.getElementById("dashUser");
+    if (userEl) userEl.textContent = u;
 
-    let best = localStorage.getItem("bestWpm_" + user) || 0;
-    document.getElementById("bestWpm").textContent = best;
+    const bw = document.getElementById("dashBestWpm");
+    const ac = document.getElementById("dashAccuracy");
+    const sk = document.getElementById("dashStreak");
+    const gp = document.getElementById("dashGames");
 
-    let acc = localStorage.getItem("lastAccuracy_" + user) || 0;
-    document.getElementById("accuracy").textContent = acc;
-
-    let savedStreak = localStorage.getItem("maxStreak_" + user) || 0;
-    if (document.getElementById("streak")) {
-        document.getElementById("streak").textContent = savedStreak;
-    }
+    if (bw) bw.textContent = localStorage.getItem("bestWpm_" + u) || 0;
+    if (ac) ac.textContent = (localStorage.getItem("lastAccuracy_" + u) || 0) + "%";
+    if (sk) sk.textContent = localStorage.getItem("maxStreak_" + u) || 0;
+    if (gp) gp.textContent = localStorage.getItem("gamesPlayed_" + u) || 0;
 }
 
-// =====================
-// TEXT GENERATOR
-// =====================
-function getTextByDifficulty() {
-    const easy = ["I like coding.", "Dogs are friendly.", "JavaScript is fun."];
-    const medium = [
-        "Programming improves problem solving skills.",
-        "Typing fast requires daily practice and focus.",
-        "Developers build software for real world problems."
-    ];
-    const hard = [
-        "Asynchronous programming improves performance in non-blocking operations.",
-        "Data structures determine software efficiency and scalability.",
-        "Modern applications rely on optimized backend architecture."
-    ];
-
-    let level = difficulty ? difficulty.value : "medium";
-
-    if (level === "easy") return easy[Math.floor(Math.random() * easy.length)];
-    if (level === "hard") return hard[Math.floor(Math.random() * hard.length)];
-    return medium[Math.floor(Math.random() * medium.length)];
-}
+loadDashboard();
 
 // =====================
 // START GAME
 // =====================
-if (startBtn) {
-startBtn.addEventListener("click", startCountdown);
-}
+if (startBtn) startBtn.addEventListener("click", startCountdown);
+
+// Press Enter to start if not playing
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && startBtn && !isPlaying) startCountdown();
+});
 
 function startCountdown() {
     let count = 3;
-
     resetGame();
+    if (inputBox) inputBox.disabled = true;
+    if (textDisplay) textDisplay.textContent = "Get ready...";
+    if (countdownEl) countdownEl.textContent = count;
 
-    inputBox.disabled = true;
-    textDisplay.textContent = "Get ready...";
-    countdownEl.textContent = count;
-
-    let cd = setInterval(() => {
+    const cd = setInterval(() => {
         count--;
-        countdownEl.textContent = count;
-
-        if (count === 0) {
+        if (countdownEl) countdownEl.textContent = count > 0 ? count : "Go!";
+        if (count <= 0) {
             clearInterval(cd);
-            countdownEl.textContent = "";
-            startGame();
+            setTimeout(() => {
+                if (countdownEl) countdownEl.textContent = "";
+                startGame();
+            }, 400);
         }
     }, 1000);
 }
 
 function startGame() {
+    if (!inputBox || !textDisplay) return;
+
     inputBox.value = "";
     inputBox.disabled = false;
     inputBox.focus();
 
     originalText = getTextByDifficulty();
-    textDisplay.innerHTML = originalText;
+    textDisplay.innerHTML = renderText("", originalText);
 
-    time = 0;
-    isPlaying = true;
-    combo = 0;
-
-    streak = 0;
-    maxStreak = 0;
-
+    time = 0; isPlaying = true; combo = 0; streak = 0; maxStreak = 0; mistakes = 0;
     clearInterval(timer);
 
     timer = setInterval(() => {
         time++;
-        timeEl.textContent = time;
-
-        if (time >= MAX_TIME) {
-            endGame(true);
-        }
+        if (timeEl) timeEl.textContent = time;
+        if (time >= MAX_TIME) endGame(true);
     }, 1000);
 }
 
 // =====================
-// INPUT ENGINE + STREAK
+// RENDER TEXT
 // =====================
-if (inputBox) {
-inputBox.addEventListener("input", () => {
-    if (!isPlaying) return;
-
-    let typed = inputBox.value;
-
-    let correct = 0;
-    combo = 0;
-
+function renderText(typed, original) {
     let html = "";
-
-    for (let i = 0; i < originalText.length; i++) {
+    for (let i = 0; i < original.length; i++) {
         if (i < typed.length) {
-            if (typed[i] === originalText[i]) {
-                html += `<span style="color:#00ff99">${originalText[i]}</span>`;
-                correct++;
-                combo++;
-
-                streak++;
-                if (streak > maxStreak) maxStreak = streak;
-
+            if (typed[i] === original[i]) {
+                html += `<span class="char-correct">${escapeHtml(original[i])}</span>`;
             } else {
-                html += `<span style="color:red">${originalText[i]}</span>`;
-                streak = 0;
+                html += `<span class="char-wrong">${escapeHtml(original[i])}</span>`;
             }
+        } else if (i === typed.length) {
+            html += `<span class="char-cursor">${escapeHtml(original[i])}</span>`;
         } else {
-            html += originalText[i];
+            html += `<span class="char-pending">${escapeHtml(original[i])}</span>`;
         }
     }
+    return html;
+}
 
-    textDisplay.innerHTML = html;
+function escapeHtml(c) {
+    return c === "<" ? "&lt;" : c === ">" ? "&gt;" : c === "&" ? "&amp;" : c;
+}
 
-    comboEl.textContent = combo;
+// =====================
+// INPUT ENGINE
+// =====================
+if (inputBox) {
+    inputBox.addEventListener("input", () => {
+        if (!isPlaying) return;
 
-    if (document.getElementById("streak")) {
-        document.getElementById("streak").textContent = streak;
-    }
+        const typed = inputBox.value;
+        let correct = 0;
+        combo = 0;
 
-    updateProgress();
+        for (let i = 0; i < typed.length; i++) {
+            if (typed[i] === originalText[i]) {
+                correct++;
+                combo++;
+                streak++;
+                if (streak > maxStreak) maxStreak = streak;
+            } else {
+                streak = 0;
+                mistakes++;
+            }
+        }
 
-    let words = typed.trim().split(" ").length;
-    let wpm = Math.round((words / time) * 60) || 0;
+        if (textDisplay) textDisplay.innerHTML = renderText(typed, originalText);
 
-    let accuracy = Math.round((correct / originalText.length) * 100) || 0;
+        if (comboEl)  comboEl.textContent  = combo;
+        if (streakEl) streakEl.textContent = streak;
 
-    wpmEl.textContent = wpm;
-    accuracyEl.textContent = accuracy;
+        // Progress
+        if (progressFill) {
+            progressFill.style.width = ((typed.length / originalText.length) * 100) + "%";
+        }
 
-    if (typed === originalText) {
-        endGame(false, accuracy);
-    }
-});
+        // WPM & accuracy
+        const words    = typed.trim() ? typed.trim().split(/\s+/).length : 0;
+        const elapsed  = time || 1;
+        const wpm      = Math.round((words / elapsed) * 60);
+        const accuracy = Math.round((correct / Math.max(typed.length, 1)) * 100);
+
+        if (wpmEl)      wpmEl.textContent      = wpm;
+        if (accuracyEl) accuracyEl.textContent = accuracy;
+
+        if (typed === originalText) endGame(false, accuracy, wpm);
+    });
 }
 
 // =====================
 // END GAME
 // =====================
-function endGame(timeout = false, accuracy = 0) {
+function endGame(timeout = false, accuracy = 0, finalWpm = 0) {
     clearInterval(timer);
     isPlaying = false;
-    inputBox.disabled = true;
+    if (inputBox) inputBox.disabled = true;
 
-    let typed = inputBox.value;
-    let words = typed.trim().split(" ").length;
-    let wpm = Math.round((words / time) * 60) || 0;
+    const typed = inputBox ? inputBox.value : "";
+    const words = typed.trim() ? typed.trim().split(/\s+/).length : 0;
+    const wpm   = finalWpm || Math.round((words / Math.max(time, 1)) * 60);
+    const acc   = accuracy || Math.round(((originalText.length - mistakes) / Math.max(originalText.length, 1)) * 100);
 
-    if (wpm > bestWpm) {
+    const isNewRecord = wpm > bestWpm;
+    if (isNewRecord) {
         bestWpm = wpm;
         localStorage.setItem(bestKey, bestWpm);
         if (bestWpmEl) bestWpmEl.textContent = bestWpm;
     }
 
-    localStorage.setItem("lastAccuracy_" + user, accuracy);
+    // Track games played
+    const gamesKey = "gamesPlayed_" + user;
+    localStorage.setItem(gamesKey, (parseInt(localStorage.getItem(gamesKey)) || 0) + 1);
+    localStorage.setItem("lastAccuracy_" + user, acc);
     localStorage.setItem("maxStreak_" + user, maxStreak);
 
-    textDisplay.textContent = timeout
-        ? "⏰ Time's up!"
-        : "🎉 Perfect! You finished!";
-
-    if (typeSound) typeSound.play();
+    // Show modal
+    showResultModal({ wpm, acc, time, maxStreak, timeout, isNewRecord });
 }
 
 // =====================
-// PROGRESS BAR
+// RESULT MODAL
 // =====================
-function updateProgress() {
-    let percent = (inputBox.value.length / originalText.length) * 100;
-    progressBar.innerHTML = `<div style="width:${percent}%;height:100%;background:#00ff99;"></div>`;
+function showResultModal({ wpm, acc, time, maxStreak, timeout, isNewRecord }) {
+    const overlay = document.getElementById("resultModal");
+    if (!overlay) return;
+
+    overlay.querySelector("#modalTitle").textContent    = timeout ? "⏰ Time's Up!" : "🎉 Well Done!";
+    overlay.querySelector("#modalSub").textContent      = timeout ? "You ran out of time." : "You finished the text!";
+    overlay.querySelector("#modalWpm").textContent      = wpm;
+    overlay.querySelector("#modalAcc").textContent      = acc + "%";
+    overlay.querySelector("#modalTime").textContent     = time + "s";
+    overlay.querySelector("#modalStreak").textContent   = maxStreak;
+
+    const badge = overlay.querySelector("#newRecordBadge");
+    badge.style.display = isNewRecord ? "inline-block" : "none";
+
+    overlay.classList.add("show");
+}
+
+function closeModal() {
+    const overlay = document.getElementById("resultModal");
+    if (overlay) overlay.classList.remove("show");
+}
+
+function playAgain() {
+    closeModal();
+    startCountdown();
 }
 
 // =====================
@@ -409,42 +417,31 @@ function updateProgress() {
 // =====================
 function resetGame() {
     clearInterval(timer);
+    time = 0; isPlaying = false; originalText = "";
+    streak = 0; combo = 0; mistakes = 0;
 
-    time = 0;
-    isPlaying = false;
-    originalText = "";
-
-    streak = 0;
-
-    if (inputBox) inputBox.value = "";
-    if (inputBox) inputBox.disabled = true;
-
-    if (timeEl) timeEl.textContent = 0;
-    if (wpmEl) wpmEl.textContent = 0;
-    if (accuracyEl) accuracyEl.textContent = 0;
-    if (comboEl) comboEl.textContent = 0;
-    if (countdownEl) countdownEl.textContent = "";
-
-    if (progressBar) progressBar.innerHTML = "";
-
-    if (document.getElementById("streak")) {
-        document.getElementById("streak").textContent = 0;
-    }
+    if (inputBox)     { inputBox.value = ""; inputBox.disabled = true; }
+    if (timeEl)       timeEl.textContent      = 0;
+    if (wpmEl)        wpmEl.textContent       = 0;
+    if (accuracyEl)   accuracyEl.textContent  = 0;
+    if (comboEl)      comboEl.textContent     = 0;
+    if (streakEl)     streakEl.textContent    = 0;
+    if (countdownEl)  countdownEl.textContent = "";
+    if (progressFill) progressFill.style.width = "0%";
+    if (textDisplay)  textDisplay.textContent = "Press Start or Enter to begin";
 }
 
 // =====================
 // RESTART
 // =====================
-if (restartBtn) {
-    restartBtn.addEventListener("click", resetGame);
-}
+if (restartBtn) restartBtn.addEventListener("click", resetGame);
 
 // =====================
 // NAVIGATION
 // =====================
-function goRegister() {
-    window.location.href = "register.html";
-}
+function goRegister() { window.location.href = "register.html"; }
+function goLogin()    { window.location.href = "login.html"; }
+function playGame()   { window.location.href = "game.html"; }
 
 function logout() {
     localStorage.removeItem("loggedUser");

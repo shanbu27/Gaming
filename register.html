@@ -1,25 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — Typing Game</title>
     <link rel="stylesheet" href="style.css">
+    <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.add("light-mode");}</script>
 </head>
-
 <body>
- 
+
 <a href="index.html" class="back-btn">← Back</a>
 
 <div class="auth-wrapper">
     <div class="auth-container">
 
-        <h2>Create Account</h2>
+        <h2>⚡ Create Account</h2>
+        <p class="auth-subtitle">Join and start tracking your typing speed</p>
 
-        <input id="regUser" placeholder="Username">
-        <input id="regEmail" placeholder="Email (optional)">
-        <input id="regPass" type="password" placeholder="Password">
-        <input id="regConfirm" type="password" placeholder="Confirm Password">
+        <input id="regUser"    placeholder="Username (letters, numbers, _)" autocomplete="username">
+        <input id="regEmail"   placeholder="Email (optional)" type="email" autocomplete="email">
+        <input id="regPass"    type="password" placeholder="Password (min 5 chars + number)" autocomplete="new-password">
+        <input id="regConfirm" type="password" placeholder="Confirm Password" autocomplete="new-password">
 
-        <button onclick="register()">Create Account</button>
+        <button onclick="register()">Create Account →</button>
 
         <p id="errorMsg"></p>
 
@@ -29,6 +32,10 @@
 </div>
 
 <script src="script.js"></script>
-
+<script>
+    document.addEventListener("keydown", e => {
+        if (e.key === "Enter") register();
+    });
+</script>
 </body>
 </html>

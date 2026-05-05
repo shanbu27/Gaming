@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Typing Game — Play</title>
+    <link rel="stylesheet" href="style.css">
+    <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.add("light-mode");}</script>
+    <style>
+        .char-correct { color: #00f5a0; }
+        .char-wrong   { color: #ff4d6d; background: rgba(255,77,109,0.12); border-radius: 2px; }
+        .char-cursor  { color: #fff; background: #00f5a0; border-radius: 2px; }
+        .char-pending { color: var(--muted); }
+    </style>
+</head>
+
+<body class="game-body">
+
+<!-- TOP ACTIONS: Dashboard link + Logout (only for logged-in users) -->
+<div class="top-actions" id="topActions">
+    <!-- Filled by JS -->
+</div>
+
+<!-- THEME BUTTON -->
+<div class="top-controls">
+    <button onclick="toggleTheme()" id="themeToggle">☀️ Light Mode</button>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="modal-overlay" id="resultModal">
+    <div class="modal-box">
+        <span class="new-record-badge" id="newRecordBadge">🏆 New Record!</span>
+        <h2 id="modalTitle">🎉 Well Done!</h2>
+        <p class="modal-sub" id="modalSub">You finished the text!</p>
+        <div class="modal-stats">
+            <div class="modal-stat highlight">
+                <div class="label">WPM</div>
+                <div class="value" id="modalWpm">0</div>
+            </div>
+            <div class="modal-stat">
+                <div class="label">Accuracy</div>
+                <div class="value" id="modalAcc">0%</div>
+            </div>
+            <div class="modal-stat">
+                <div class="label">Time</div>
+                <div class="value" id="modalTime">0s</div>
+            </div>
+            <div class="modal-stat">
+                <div class="label">Best Streak</div>
+                <div class="value" id="modalStreak">0</div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-play-again" onclick="playAgain()">▶ Play Again</button>
+            <button class="btn-close" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- GAME CONTAINER -->
+<div class="container">
+
+    <div class="top-bar">
+        <h1>⚡ Typing Game</h1>
+    </div>
+
+    <p id="userLabel">Player</p>
+
+    <div id="progressBar">
+        <div id="progressFill" style="width:0%;height:100%;background:linear-gradient(90deg,#00f5a0,#00c8ff);border-radius:10px;transition:width 0.15s ease;"></div>
+    </div>
+
+    <div id="textDisplay">Press Start or Enter to begin</div>
+
+    <textarea id="inputBox" placeholder="Start typing here..." disabled></textarea>
+
+    <div class="game-controls">
+        <button id="startBtn">▶ Start Game</button>
+        <button id="restartBtn">↺ Restart</button>
+        <select id="difficulty">
+            <option value="easy">🟢 Easy</option>
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="hard">🔴 Hard</option>
+        </select>
+    </div>
+
+    <h3 id="countdown"></h3>
+
+    <div class="stats">
+        <div class="stat-box">
+            <span class="stat-label">⏱ Time</span>
+            <span class="stat-value" id="time">0</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">⚡ WPM</span>
+            <span class="stat-value" id="wpm">0</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">🎯 Accuracy</span>
+            <span class="stat-value" id="accuracy">0</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">🔥 Streak</span>
+            <span class="stat-value" id="streak">0</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">✨ Combo</span>
+            <span class="stat-value" id="combo">0</span>
+        </div>
+    </div>
+
+    <p class="best-banner">🏆 Best WPM: <span id="bestWpm">0</span></p>
+
+    <audio id="typeSound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="none"></audio>
+
+</div>
+
+<script src="script.js"></script>
+<script>
+    // Build top action bar based on login state
+    const topActions = document.getElementById("topActions");
+    const currentUser = localStorage.getItem("loggedUser");
+
+    if (currentUser) {
+        topActions.innerHTML = `
+            <button onclick="window.location.href='dashboard.html'">📊 Dashboard</button>
+            <button onclick="logout()">🚪 Logout</button>
+        `;
+    } else {
+        topActions.innerHTML = `
+            <button onclick="window.location.href='register.html'">Create Account</button>
+            <button onclick="window.location.href='login.html'">Login</button>
+        `;
+    }
+</script>
+</body>
+</html>

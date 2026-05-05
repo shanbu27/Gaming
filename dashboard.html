@@ -1,28 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Typing Game</title>
     <link rel="stylesheet" href="style.css">
+    <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.add("light-mode");}</script>
 </head>
-<body>
+<body class="dash-body">
 
-<div class="dash-container">
+<div class="dash-header">
+    <h1>⚡ Typing Game</h1>
+    <p id="dashUser" style="font-size:15px;color:var(--accent);margin-top:4px;"></p>
+</div>
 
-    <h1>🎮 Dashboard</h1>
-
-    <div class="card">
-        <h2 id="user"></h2>
-
-        <p>🏆 Best WPM: <span id="bestWpm">0</span></p>
-        <p>🎯 Last Accuracy: <span id="accuracy">0</span>%</p>
-
-        <button onclick="playGame()">▶ Play Game</button>
-        <button onclick="logout()">🚪 Logout</button>
+<div class="dash-grid">
+    <div class="dash-card">
+        <div class="dash-icon">🏆</div>
+        <div class="dash-stat-label">Best WPM</div>
+        <div class="dash-stat-value" id="dashBestWpm">0</div>
     </div>
+    <div class="dash-card">
+        <div class="dash-icon">🎯</div>
+        <div class="dash-stat-label">Last Accuracy</div>
+        <div class="dash-stat-value" id="dashAccuracy">0%</div>
+    </div>
+    <div class="dash-card">
+        <div class="dash-icon">🔥</div>
+        <div class="dash-stat-label">Best Streak</div>
+        <div class="dash-stat-value" id="dashStreak">0</div>
+    </div>
+    <div class="dash-card" style="grid-column: span 3;">
+        <div class="dash-icon">🎮</div>
+        <div class="dash-stat-label">Games Played</div>
+        <div class="dash-stat-value" id="dashGames">0</div>
+    </div>
+</div>
 
+<div class="dash-actions">
+    <button onclick="playGame()">▶ Play Game</button>
+    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
